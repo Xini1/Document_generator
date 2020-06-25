@@ -7,6 +7,7 @@ public class TemplateTransformer {
     private Map<Property, String> properties;
     private Property numberProperty;
 
+    private String directory;
     private String template;
     private String customer;
     private String numberLabel;
@@ -18,6 +19,10 @@ public class TemplateTransformer {
 
     public void setNumberProperty(Property numberProperty) {
         this.numberProperty = numberProperty;
+    }
+
+    public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
     public void setTemplate(String template) {
@@ -40,7 +45,7 @@ public class TemplateTransformer {
         int number = Integer.parseInt(properties.get(numberProperty));
         String name = template.replace(numberLabel, String.valueOf(number));
         name = name.replace(customerLabel, customer);
-        name += ".docx";
+        name = directory + '\\' + name + ".docx";
         number++;
         properties.put(numberProperty, String.valueOf(number));
 
@@ -51,6 +56,7 @@ public class TemplateTransformer {
         private Map<Property, String> properties;
         private Property numberProperty;
 
+        private String directory;
         private String template;
         private String customer;
         private String numberLabel;
@@ -63,6 +69,11 @@ public class TemplateTransformer {
 
         public Builder setNumberProperty(Property numberProperty) {
             this.numberProperty = numberProperty;
+            return this;
+        }
+
+        public Builder setDirectory(String directory) {
+            this.directory = directory;
             return this;
         }
 
@@ -90,6 +101,7 @@ public class TemplateTransformer {
             TemplateTransformer templateTransformer = new TemplateTransformer();
             templateTransformer.setProperties(properties);
             templateTransformer.setNumberProperty(numberProperty);
+            templateTransformer.setDirectory(directory);
             templateTransformer.setTemplate(template);
             templateTransformer.setCustomer(customer);
             templateTransformer.setNumberLabel(numberLabel);

@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -196,10 +197,26 @@ public class MainController {
         Replacements replacements = propertiesHandler.getBasicReplacements();
         fetchData(replacements, properties);
 
-        createNewOrder(replacements, properties);
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        String defaultSaveDirectory = properties.get(Property.DEFAULT_SAVE_DIRECTORY);
+
+        if (defaultSaveDirectory.isEmpty()) {
+            defaultSaveDirectory = ".";
+        }
+
+        directoryChooser.setInitialDirectory(new File(defaultSaveDirectory));
+        directoryChooser.setTitle("Сохранить");
+
+        File saveDirectory = directoryChooser.showDialog(orderFillingFileNameField.getScene().getWindow());
+
+        if (saveDirectory == null) {
+            return;
+        }
+
+        createNewOrder(replacements, properties, saveDirectory);
 
         if (contractOptionsComboBox.getSelectionModel().getSelectedIndex() == 1) {
-            createNewContract(replacements, properties);
+            createNewContract(replacements, properties, saveDirectory);
         }
 
         if (saveOrderFillingCheckbox.isSelected()) {
@@ -320,7 +337,7 @@ public class MainController {
         replacements.put("/--CONTRACT_DATE--/", contractDate);
     }
 
-    private void createNewOrder(Replacements replacements, Map<Property, String> properties) {
+    private void createNewOrder(Replacements replacements, Map<Property, String> properties, File saveDirectory) {
         String customer = customerOptionsComboBox.getSelectionModel().getSelectedItem();
 
         DocxIOHandler orderDocxIOHandler = new DocxIOHandler.Builder()
@@ -333,6 +350,7 @@ public class MainController {
                 .setProperties(properties)
                 .setNumberProperty(Property.NEXT_ORDER_NUMBER)
                 .setTemplate(properties.get(Property.ORDER_TITLE_TEMPLATE))
+                .setDirectory(saveDirectory.toString())
                 .setCustomer(customer)
                 .setNumberLabel(properties.get(Property.TEMPLATE_NUMBER_LABEL))
                 .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
@@ -345,7 +363,7 @@ public class MainController {
         orderDocxIOHandler.save(orderTemplateTransformer.getNextFileName());
     }
 
-    private void createNewContract(Replacements replacements, Map<Property, String> properties) {
+    private void createNewContract(Replacements replacements, Map<Property, String> properties, File saveDirectory) {
         String customer = customerOptionsComboBox.getSelectionModel().getSelectedItem();
 
         DocxIOHandler contractDocxIOHandler = new DocxIOHandler.Builder()
@@ -357,6 +375,7 @@ public class MainController {
         TemplateTransformer contractTemplateTransformer = new TemplateTransformer.Builder()
                 .setProperties(properties)
                 .setNumberProperty(Property.NEXT_CONTRACT_NUMBER)
+                .setDirectory(saveDirectory.toString())
                 .setTemplate(properties.get(Property.CONTRACT_TITLE_TEMPLATE))
                 .setCustomer(customer)
                 .setNumberLabel(properties.get(Property.TEMPLATE_NUMBER_LABEL))

@@ -11,3 +11,4 @@ TEMPLATE_NUMBER_LABEL=/--number--/;
 ORDER_PATH=resources/order /--customer--/.docx;
 TEMPLATE_CUSTOMER_LABEL=/--customer--/;
 CUSTOMER_LIST=Дубаневич,Шалейко,Аист;
+DEFAULT_SAVE_DIRECTORY=D:\Максим\;
