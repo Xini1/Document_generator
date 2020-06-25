@@ -395,7 +395,9 @@ public class MainController {
 
     private void updateCustomerOptionsComboBox(Map<Property, String> properties) {
         String[] customerOptions = properties.get(Property.CUSTOMER_LIST).split(",");
-        customerOptionsComboBox.getItems().addAll(customerOptions);
+        ObservableList<String> items = customerOptionsComboBox.getItems();
+        items.clear();
+        items.addAll(customerOptions);
         customerOptionsComboBox.setValue(customerOptions[0]);
     }
 }
