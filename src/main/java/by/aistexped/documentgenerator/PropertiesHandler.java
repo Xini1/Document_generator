@@ -1,7 +1,6 @@
 package by.aistexped.documentgenerator;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -16,17 +15,13 @@ public class PropertiesHandler {
 
     public static final String PROPERTIES_FILE_PATH = "properties.txt";
 
-    private Logger logger = Logger.getInstance();
-
     public PropertiesHandler() {
-        logger.logConstructorInvocation(getClass());
-
         File propertiesFile = new File(PROPERTIES_FILE_PATH);
 
         if (!propertiesFile.exists()) {
             createEmptyPropertiesFile();
             RuntimeException exception = new RuntimeException("properties.txt not found.");
-            logger.logException(exception);
+            Logger.getInstance().logException(exception);
             throw exception;
         }
 
@@ -34,14 +29,12 @@ public class PropertiesHandler {
 
         if (!validate()) {
             RuntimeException exception = new RuntimeException("Missing properties values.");
-            logger.logException(exception);
+            Logger.getInstance().logException(exception);
             throw exception;
         }
     }
 
     private void loadPropertiesFromFile(File propertiesFile) {
-        logger.logMethodInvocation(getClass(), "loadPropertiesFromFile", propertiesFile.toString());
-
         try (Scanner scanner = new Scanner(propertiesFile)) {
             StringBuilder builder = new StringBuilder();
 
@@ -52,31 +45,23 @@ public class PropertiesHandler {
             String propertiesFileContent = builder.toString();
             properties = parseProperties(propertiesFileContent);
         } catch (IOException e) {
-            logger.logException(e);
+            Logger.getInstance().logException(e);
         }
     }
 
     public Map<Property, String> getProperties() {
-        logger.logMethodInvocation(getClass(), "getProperties");
-
-        logger.logReturnValue(properties);
         return properties;
     }
 
     public Replacements getBasicReplacements() {
-        logger.logMethodInvocation(getClass(), "getBasicReplacements");
-
         Replacements replacements = new Replacements();
         addDateInfo(replacements);
         addOrderInfo(replacements);
 
-        logger.logReturnValue(replacements);
         return replacements;
     }
 
     private void addDateInfo(Replacements replacements) {
-        logger.logMethodInvocation(getClass(), "addDateInfo", replacements.toString());
-
         LocalDate date = LocalDate.now();
 
         String month = "";
@@ -130,8 +115,6 @@ public class PropertiesHandler {
     }
 
     private void addOrderInfo(Replacements replacements) {
-        logger.logMethodInvocation(getClass(), "addOrderInfo", replacements.toString());
-
         String orderNumber = properties.get(Property.NEXT_ORDER_NUMBER);
         String orderNumberPrefix = properties.get(Property.ORDER_NUMBER_PREFIX);
         String orderNumberPostfix = properties.get(Property.ORDER_NUMBER_POSTFIX);
@@ -142,21 +125,17 @@ public class PropertiesHandler {
     }
 
     public void saveToFile() {
-        logger.logMethodInvocation(getClass(), "saveToFile");
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROPERTIES_FILE_PATH))) {
             String propertiesString = properties.entrySet().stream()
                     .map(entry -> entry.getKey().toString() + '=' + entry.getValue() + ";")
                     .collect(Collectors.joining("\n"));
             writer.write(propertiesString);
         } catch (IOException e) {
-            logger.logException(e);
+            Logger.getInstance().logException(e);
         }
     }
 
     private Map<Property, String> parseProperties(String propertiesFileContent) {
-        logger.logMethodInvocation(getClass(), "parseProperties", propertiesFileContent);
-
         Map<Property, String> parsedProperties = new HashMap<>();
         String[] propertiesWithValues = propertiesFileContent.split(";");
 
@@ -169,34 +148,27 @@ public class PropertiesHandler {
             parsedProperties.put(property, value);
         }
 
-        logger.logReturnValue(parsedProperties);
         return parsedProperties;
     }
 
     private boolean validate() {
-        logger.logMethodInvocation(getClass(), "validate");
-
         for (Property property : Property.values()) {
             if (properties.get(property) == null) {
-                logger.logReturnValue(false);
                 return false;
             }
         }
 
-        logger.logReturnValue(true);
         return true;
     }
 
     private void createEmptyPropertiesFile() {
-        logger.logMethodInvocation(getClass(), "createEmptyPropertiesFile");
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROPERTIES_FILE_PATH))) {
             String propertiesString = Arrays.stream(Property.values())
                     .map(property -> property.toString() + "=;")
                     .collect(Collectors.joining("\n"));
             writer.write(propertiesString);
         } catch (IOException e) {
-            logger.logException(e);
+            Logger.getInstance().logException(e);
         }
     }
 }

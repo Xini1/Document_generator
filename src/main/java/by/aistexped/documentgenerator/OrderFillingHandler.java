@@ -8,11 +8,7 @@ public class OrderFillingHandler {
 
     private List<String> labelsToSearchFor;
 
-    private Logger logger = Logger.getInstance();
-
     public OrderFillingHandler() {
-        logger.logConstructorInvocation(getClass());
-
         labelsToSearchFor = new ArrayList<>();
         labelsToSearchFor.add("/--SENDER--/");
         labelsToSearchFor.add("/--RECIPIENT--/");
@@ -33,8 +29,6 @@ public class OrderFillingHandler {
     }
 
     private Map<String, String> fetchRouteCargoPriceLabels(Replacements replacements) {
-        logger.logMethodInvocation(getClass(), "fetchRouteCargoPriceLabels", replacements.toString());
-
         Map<String, String> labelsAndValuesToSave = new HashMap<>();
 
         for (String label : labelsToSearchFor) {
@@ -43,15 +37,11 @@ public class OrderFillingHandler {
             labelsAndValuesToSave.put(label, value);
         }
 
-        logger.logReturnValue(labelsAndValuesToSave);
         return labelsAndValuesToSave;
     }
 
     public void save(String fileName, Replacements replacements) {
-        logger.logMethodInvocation(getClass(), "save", fileName, replacements.toString());
-
         Map<String, String> labelsAndValuesToSave = fetchRouteCargoPriceLabels(replacements);
-
 
         try (BufferedWriter writer = new BufferedWriter(
                 new FileWriter("filling_templates/" + fileName + ".txt"))) {
@@ -61,13 +51,11 @@ public class OrderFillingHandler {
 
             writer.write(labelsAndValuesToSaveString);
         } catch (IOException e) {
-            logger.logException(e);
+            Logger.getInstance().logException(e);
         }
     }
 
     public Map<String, String> load(File file) {
-        logger.logMethodInvocation(getClass(), "load");
-
         Map<String, String> replacements = new HashMap<>();
 
         try (Scanner scanner = new Scanner(file)) {
@@ -81,10 +69,9 @@ public class OrderFillingHandler {
                 replacements.put(label, value);
             }
         } catch (FileNotFoundException e) {
-            logger.logException(e);
+            Logger.getInstance().logException(e);
         }
 
-        logger.logReturnValue(replacements);
         return replacements;
     }
 }

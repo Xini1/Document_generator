@@ -8,58 +8,43 @@ public class TemplateTransformer {
     private Property numberProperty;
 
     private String template;
+    private String customer;
     private String numberLabel;
-
-    private Logger logger = Logger.getInstance();
-
-    public TemplateTransformer() {
-        logger.logConstructorInvocation(getClass());
-    }
+    private String customerLabel;
 
     public void setProperties(Map<Property, String> properties) {
-        logger.logMethodInvocation(getClass(), "setProperties", properties.toString());
-
         this.properties = properties;
     }
 
     public void setNumberProperty(Property numberProperty) {
-        logger.logMethodInvocation(getClass(), "setNumberProperty", numberProperty.toString());
-
         this.numberProperty = numberProperty;
     }
 
     public void setTemplate(String template) {
-        logger.logMethodInvocation(getClass(), "setTemplate", template);
-
         this.template = template;
     }
 
-    public void setNumberLabel(String numberLabel) {
-        logger.logMethodInvocation(getClass(), "setNumberLabel", numberLabel);
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
 
+    public void setNumberLabel(String numberLabel) {
         this.numberLabel = numberLabel;
     }
 
-    public String getNextFileName() {
-        logger.logMethodInvocation(getClass(), "getNextFileName");
+    public void setCustomerLabel(String customerLabel) {
+        this.customerLabel = customerLabel;
+    }
 
+    public String getNextFileName() {
         int number = Integer.parseInt(properties.get(numberProperty));
-        String name = template.replace(numberLabel, String.valueOf(number)) + ".docx";
+        String name = template.replace(numberLabel, String.valueOf(number));
+        name = name.replace(customerLabel, customer);
+        name += ".docx";
         number++;
         properties.put(numberProperty, String.valueOf(number));
 
-        logger.logReturnValue(name);
         return name;
-    }
-
-    @Override
-    public String toString() {
-        return "by.aistexped.documentgenerator.TemplateTransformer{" +
-                "properties=" + properties +
-                ", numberProperty=" + numberProperty +
-                ", template='" + template + '\'' +
-                ", numberLabel='" + numberLabel + '\'' +
-                '}';
     }
 
     public static class Builder {
@@ -67,52 +52,49 @@ public class TemplateTransformer {
         private Property numberProperty;
 
         private String template;
+        private String customer;
         private String numberLabel;
-
-        private Logger logger = Logger.getInstance();
-
-        public Builder() {
-            logger.logConstructorInvocation(getClass());
-        }
+        private String customerLabel;
 
         public Builder setProperties(Map<Property, String> properties) {
-            logger.logMethodInvocation(getClass(), "setProperties", properties.toString());
-
             this.properties = properties;
             return this;
         }
 
         public Builder setNumberProperty(Property numberProperty) {
-            logger.logMethodInvocation(getClass(), "setNumberProperty", numberProperty.toString());
-
             this.numberProperty = numberProperty;
             return this;
         }
 
         public Builder setTemplate(String template) {
-            logger.logMethodInvocation(getClass(), "setTemplate", template);
-
             this.template = template;
             return this;
         }
 
-        public Builder setNumberLabel(String numberLabel) {
-            logger.logMethodInvocation(getClass(), "setNumberLabel", numberLabel);
+        public Builder setCustomer(String customer) {
+            this.customer = customer;
+            return this;
+        }
 
+        public Builder setNumberLabel(String numberLabel) {
             this.numberLabel = numberLabel;
             return this;
         }
 
-        public TemplateTransformer build() {
-            logger.logMethodInvocation(getClass(), "build");
+        public Builder setCustomerLabel(String customerLabel) {
+            this.customerLabel = customerLabel;
+            return this;
+        }
 
+        public TemplateTransformer build() {
             TemplateTransformer templateTransformer = new TemplateTransformer();
             templateTransformer.setProperties(properties);
             templateTransformer.setNumberProperty(numberProperty);
             templateTransformer.setTemplate(template);
+            templateTransformer.setCustomer(customer);
             templateTransformer.setNumberLabel(numberLabel);
+            templateTransformer.setCustomerLabel(customerLabel);
 
-            logger.logReturnValue(templateTransformer);
             return templateTransformer;
         }
     }

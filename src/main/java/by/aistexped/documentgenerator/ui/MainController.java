@@ -16,8 +16,6 @@ import by.aistexped.documentgenerator.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -124,16 +122,16 @@ public class MainController {
     @FXML
     private Label orderFillingFileNameLabel;
 
+    @FXML
+    private ComboBox<String> customerOptionsComboBox;
+
     private List<TextInputControl> textFieldsForDefaultInterpretation;
     private List<DatePicker> datePickersForDefaultInterpretation;
     private List<ComboBox<String>> comboBoxesForDefaultInterpretation;
-
-    private Logger logger = Logger.getInstance();
+    private PropertiesHandler propertiesHandler;
 
     @FXML
     public void initialize() {
-        logger.logMethodInvocation(getClass(), "initialize");
-
         textFieldsForDefaultInterpretation = new ArrayList<>();
         textFieldsForDefaultInterpretation.add(carrierField);
         textFieldsForDefaultInterpretation.add(carrierVatinField);
@@ -165,6 +163,8 @@ public class MainController {
         comboBoxesForDefaultInterpretation.add(unloadTypeComboBox);
         comboBoxesForDefaultInterpretation.add(vehicleTypeComboBox);
 
+        propertiesHandler = new PropertiesHandler();
+
         List<String> loadUnloadTypes = Arrays.asList("задняя", "боковая", "верхняя");
         loadTypeComboBox.getItems().addAll(loadUnloadTypes);
         unloadTypeComboBox.getItems().addAll(loadUnloadTypes);
@@ -181,14 +181,16 @@ public class MainController {
         contractOptionsComboBox.setValue(contractOptions.get(0));
         changeContractTabView();
 
+        Map<Property, String> properties = propertiesHandler.getProperties();
+        String[] customerOptions = properties.get(Property.CUSTOMER_LIST).split(",");
+        customerOptionsComboBox.getItems().addAll(customerOptions);
+        customerOptionsComboBox.setValue(customerOptions[0]);
+
         changeOrderFillingFileNameFieldAndLabelVisibility();
     }
 
     @FXML
     public void generate() {
-        logger.logMethodInvocation(getClass(), "generate");
-
-        PropertiesHandler propertiesHandler = new PropertiesHandler();
         Map<Property, String> properties = propertiesHandler.getProperties();
 
         Replacements replacements = propertiesHandler.getBasicReplacements();
@@ -205,13 +207,10 @@ public class MainController {
         }
 
         propertiesHandler.saveToFile();
-        logger.logExit();
     }
 
     @FXML
     public void changeContractTabView() {
-        logger.logMethodInvocation(getClass(), "changeContractTabView");
-
         ObservableList<Node> content = contractTabVBox.getChildren();
 
         switch (contractOptionsComboBox.getSelectionModel().getSelectedIndex()) {
@@ -232,8 +231,6 @@ public class MainController {
 
     @FXML
     public void loadOrderFilling() {
-        logger.logMethodInvocation(getClass(), "loadOrderFilling");
-
         FileChooser fileChooser = new FileChooser();
         File initialDirectory = new File("filling_templates");
 
@@ -270,29 +267,26 @@ public class MainController {
 
     @FXML
     public void openPropertiesWindow() {
-        logger.logMethodInvocation(getClass(), "openPropertiesWindow");
-
+        Parent root;
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/properties.fxml"));
-
-            Stage stage = new Stage();
-            Scene scene = new Scene(root);
-
-            stage.initOwner(contractTabVBox.getScene().getWindow());
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.setScene(scene);
-            stage.setTitle("Настройки");
-
-            stage.show();
+            root = FXMLLoader.load(getClass().getResource("/properties.fxml"));
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.logException(e);
+            Logger.getInstance().logException(e);
+            return;
         }
+
+        Stage stage = new Stage();
+        Scene scene = new Scene(root);
+
+        stage.initOwner(contractTabVBox.getScene().getWindow());
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setScene(scene);
+        stage.setTitle("Настройки");
+
+        stage.show();
     }
 
     private void fetchData(Replacements replacements, Map<Property, String> properties) {
-        logger.logMethodInvocation(getClass(), "fetchData", replacements.toString(), properties.toString());
-
         textFieldsForDefaultInterpretation.forEach(textInputControl ->
                 replacements.put(textInputControl.getPromptText(), textInputControl.getText()));
 
@@ -327,16 +321,21 @@ public class MainController {
     }
 
     private void createNewOrder(Replacements replacements, Map<Property, String> properties) {
-        logger.logMethodInvocation(getClass(), "createNewOrder", replacements.toString(),
-                properties.toString());
+        String customer = customerOptionsComboBox.getSelectionModel().getSelectedItem();
 
-        DocxIOHandler orderDocxIOHandler = new DocxIOHandler(properties.get(Property.ORDER_PATH));
+        DocxIOHandler orderDocxIOHandler = new DocxIOHandler.Builder()
+                .setPathWithCustomerLabel(properties.get(Property.ORDER_PATH))
+                .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
+                .setCustomer(customer)
+                .build();
 
         TemplateTransformer orderTemplateTransformer = new TemplateTransformer.Builder()
                 .setProperties(properties)
                 .setNumberProperty(Property.NEXT_ORDER_NUMBER)
                 .setTemplate(properties.get(Property.ORDER_TITLE_TEMPLATE))
+                .setCustomer(customer)
                 .setNumberLabel(properties.get(Property.TEMPLATE_NUMBER_LABEL))
+                .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
                 .build();
 
         Replacer orderReplacer = new Replacer(orderDocxIOHandler.getDocument(), properties);
@@ -347,16 +346,21 @@ public class MainController {
     }
 
     private void createNewContract(Replacements replacements, Map<Property, String> properties) {
-        logger.logMethodInvocation(getClass(), "createNewContract", replacements.toString(),
-                properties.toString());
+        String customer = customerOptionsComboBox.getSelectionModel().getSelectedItem();
 
-        DocxIOHandler contractDocxIOHandler = new DocxIOHandler(properties.get(Property.CONTRACT_PATH));
+        DocxIOHandler contractDocxIOHandler = new DocxIOHandler.Builder()
+                .setPathWithCustomerLabel(properties.get(Property.CONTRACT_PATH))
+                .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
+                .setCustomer(customerOptionsComboBox.getSelectionModel().getSelectedItem())
+                .build();
 
         TemplateTransformer contractTemplateTransformer = new TemplateTransformer.Builder()
                 .setProperties(properties)
                 .setNumberProperty(Property.NEXT_CONTRACT_NUMBER)
                 .setTemplate(properties.get(Property.CONTRACT_TITLE_TEMPLATE))
+                .setCustomer(customer)
                 .setNumberLabel(properties.get(Property.TEMPLATE_NUMBER_LABEL))
+                .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
                 .build();
 
         Replacer contractReplacer = new Replacer(contractDocxIOHandler.getDocument(), properties);
@@ -366,8 +370,6 @@ public class MainController {
     }
 
     private void saveOrderFilling(String fileName, Replacements replacements) {
-        logger.logMethodInvocation(getClass(), "saveOrderFilling", fileName, replacements.toString());
-
         OrderFillingHandler orderFillingHandler = new OrderFillingHandler();
         orderFillingHandler.save(fileName, replacements);
     }

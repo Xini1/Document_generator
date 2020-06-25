@@ -11,29 +11,20 @@ public class DocxIOHandler {
     private String path;
     private XWPFDocument document;
 
-    private Logger logger = Logger.getInstance();
-
     public DocxIOHandler(String path) {
-        logger.logConstructorInvocation(getClass(), path);
-
         this.path = path;
         load();
     }
 
     public XWPFDocument getDocument() {
-        logger.logMethodInvocation(getClass(), "getDocument");
-
-        logger.logReturnValue(document.getClass().getSimpleName());
         return document;
     }
 
     public void load() {
-        logger.logMethodInvocation(getClass(), "load");
-
         try (FileInputStream fileInputStream = new FileInputStream(path)) {
             document = new XWPFDocument(fileInputStream);
         } catch (IOException e) {
-            logger.logException(e);
+            Logger.getInstance().logException(e);
         }
     }
 
@@ -41,7 +32,34 @@ public class DocxIOHandler {
         try (FileOutputStream fileOutputStream = new FileOutputStream(nameTemplate)) {
             document.write(fileOutputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getInstance().logException(e);
+        }
+    }
+
+    public static class Builder {
+
+        private String pathWithCustomerLabel;
+        private String customerLabel;
+        private String customer;
+
+        public Builder setPathWithCustomerLabel(String pathWithCustomerLabel) {
+            this.pathWithCustomerLabel = pathWithCustomerLabel;
+            return this;
+        }
+
+        public Builder setCustomerLabel(String customerLabel) {
+            this.customerLabel = customerLabel;
+            return this;
+        }
+
+        public Builder setCustomer(String customer) {
+            this.customer = customer;
+            return this;
+        }
+
+        public DocxIOHandler build() {
+            String path = pathWithCustomerLabel.replace(customerLabel, customer);
+            return new DocxIOHandler(path);
         }
     }
 }
