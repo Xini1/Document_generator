@@ -182,10 +182,7 @@ public class MainController {
         contractOptionsComboBox.setValue(contractOptions.get(0));
         changeContractTabView();
 
-        Map<Property, String> properties = propertiesHandler.getProperties();
-        String[] customerOptions = properties.get(Property.CUSTOMER_LIST).split(",");
-        customerOptionsComboBox.getItems().addAll(customerOptions);
-        customerOptionsComboBox.setValue(customerOptions[0]);
+        updateCustomerOptionsComboBox(propertiesHandler.getProperties());
 
         changeOrderFillingFileNameFieldAndLabelVisibility();
     }
@@ -301,6 +298,8 @@ public class MainController {
         stage.setTitle("Настройки");
 
         stage.show();
+
+        propertiesHandler = new PropertiesHandler();
     }
 
     private void fetchData(Replacements replacements, Map<Property, String> properties) {
@@ -391,5 +390,11 @@ public class MainController {
     private void saveOrderFilling(String fileName, Replacements replacements) {
         OrderFillingHandler orderFillingHandler = new OrderFillingHandler();
         orderFillingHandler.save(fileName, replacements);
+    }
+
+    private void updateCustomerOptionsComboBox(Map<Property, String> properties) {
+        String[] customerOptions = properties.get(Property.CUSTOMER_LIST).split(",");
+        customerOptionsComboBox.getItems().addAll(customerOptions);
+        customerOptionsComboBox.setValue(customerOptions[0]);
     }
 }
