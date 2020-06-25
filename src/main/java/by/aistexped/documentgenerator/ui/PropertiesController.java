@@ -46,16 +46,18 @@ public class PropertiesController {
     @FXML
     private TextField templateNumberLabelField;
 
+    @FXML
+    private TextField templateCustomerLabelField;
+
+    @FXML
+    private TextField customerListField;
+
     private List<TextField> propertiesFields;
     private PropertiesHandler propertiesHandler;
     private Map<Property, String> properties;
 
-    private Logger logger = Logger.getInstance();
-
     @FXML
     public void initialize() {
-        logger.logMethodInvocation(getClass(), "initialize");
-
         propertiesFields = new ArrayList<>();
         propertiesFields.add(contractPathField);
         propertiesFields.add(contractNumberPrefixField);
@@ -68,6 +70,8 @@ public class PropertiesController {
         propertiesFields.add(orderContractNumberField);
         propertiesFields.add(orderTitleTemplateField);
         propertiesFields.add(templateNumberLabelField);
+        propertiesFields.add(templateCustomerLabelField);
+        propertiesFields.add(customerListField);
 
         propertiesHandler = new PropertiesHandler();
         properties = propertiesHandler.getProperties();
@@ -77,8 +81,6 @@ public class PropertiesController {
 
     @FXML
     public void saveChanges() {
-        logger.logMethodInvocation(getClass(), "saveChanges");
-
         fetchDataFromFields();
 
         propertiesHandler.saveToFile();
@@ -88,14 +90,10 @@ public class PropertiesController {
 
     @FXML
     public void cancel() {
-        logger.logMethodInvocation(getClass(), "cancel");
-
         contractPathField.getScene().getWindow().hide();
     }
 
     private void fillInFields() {
-        logger.logMethodInvocation(getClass(), "fillInFields");
-
         propertiesFields.forEach(textField -> {
             Property property = Property.valueOf(textField.getPromptText());
             textField.setText(properties.get(property));
@@ -103,8 +101,6 @@ public class PropertiesController {
     }
 
     private void fetchDataFromFields() {
-        logger.logMethodInvocation(getClass(), "fetchDataFromFields");
-
         propertiesFields.forEach(textField -> {
             Property property = Property.valueOf(textField.getPromptText());
             properties.put(property, textField.getText());

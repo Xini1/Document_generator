@@ -5,7 +5,6 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Replacements {
 
@@ -44,14 +43,10 @@ public class Replacements {
                 run.setText(text, 0);
             }
         }
-
-        @Override
-        public String toString() {
-            return label + '=' + data;
-        }
     }
 
     private static class ReplacementWithCarriageReturn extends Replacement {
+
         public ReplacementWithCarriageReturn(String label) {
             super(label);
         }
@@ -81,16 +76,11 @@ public class Replacements {
 
     private Map<String, Replacement> replacementsForLabels;
 
-    private Logger logger = Logger.getInstance();
-
     public Replacements() {
-        logger.logConstructorInvocation(getClass());
         replacementsForLabels = new HashMap<>();
     }
 
     public void put(String label, String data) {
-        logger.logMethodInvocation(getClass(), "put", label, data);
-
         Replacement replacementObject;
 
         if (data.contains("\n")) {
@@ -104,33 +94,18 @@ public class Replacements {
     }
 
     public String get(String label) {
-        logger.logMethodInvocation(getClass(), "get", label);
-
         Replacement replacement = replacementsForLabels.get(label);
 
         if (replacement == null) {
-            logger.logReturnValue("");
             return "";
         }
 
-        logger.logReturnValue(replacement.getData());
         return replacement.getData();
     }
 
     public void apply(XWPFParagraph paragraph) {
-        logger.logMethodInvocation(getClass(), "apply",
-                "XWPFParagraph with text: " + paragraph.getText());
-
         for (Replacement replacement : replacementsForLabels.values()) {
             replacement.apply(paragraph);
         }
-    }
-
-    @Override
-    public String toString() {
-        String str = replacementsForLabels.values().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(", "));
-        return "by.aistexped.documentgenerator.Replacements{" + str + '}';
     }
 }

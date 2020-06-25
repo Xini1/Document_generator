@@ -80,7 +80,14 @@
                                  <children>
                                     <VBox fx:id="contractTabVBox" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                        <children>
-                                          <ComboBox fx:id="contractOptionsComboBox" onAction="#changeContractTabView" />
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                             <children>
+                                                <ComboBox fx:id="contractOptionsComboBox" onAction="#changeContractTabView" />
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <Label text="Заказчик" />
+                                                <ComboBox fx:id="customerOptionsComboBox" />
+                                             </children>
+                                          </HBox>
                                           <GridPane fx:id="existingContractGridPane">
                                             <columnConstraints>
                                               <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
