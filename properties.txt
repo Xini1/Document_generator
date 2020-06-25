@@ -1,0 +1,11 @@
+ORDER_NUMBER_PREFIX=;
+NEXT_ORDER_NUMBER=204;
+ORDER_TITLE_TEMPLATE=заявка Дубаневич /--number--/ А;
+ORDER_NUMBER_POSTFIX=/А;
+CONTRACT_NUMBER_PREFIX=;
+CONTRACT_TITLE_TEMPLATE=договор Дубаневич /--number--/ А;
+CONTRACT_NUMBER_POSTFIX=/А;
+NEXT_CONTRACT_NUMBER=89;
+CONTRACT_PATH=resources/contract.docx;
+TEMPLATE_NUMBER_LABEL=/--number--/;
+ORDER_PATH=resources/order.docx;
