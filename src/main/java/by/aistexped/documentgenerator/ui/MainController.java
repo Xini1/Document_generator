@@ -238,11 +238,7 @@ public class MainController {
         File initialDirectory = new File("filling_templates");
 
         if (!initialDirectory.exists()) {
-            try {
-                initialDirectory.createNewFile();
-            } catch (IOException e) {
-                logger.logException(e);
-            }
+            initialDirectory.mkdir();
         }
 
         fileChooser.setInitialDirectory(initialDirectory);
@@ -277,8 +273,7 @@ public class MainController {
         logger.logMethodInvocation(getClass(), "openPropertiesWindow");
 
         try {
-            //URL url = Paths.get("./src/main/resources/properties.fxml").toUri().toURL();
-            Parent root = FXMLLoader.load(getClass().getResource("./properties.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/properties.fxml"));
 
             Stage stage = new Stage();
             Scene scene = new Scene(root);
@@ -287,9 +282,10 @@ public class MainController {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(scene);
             stage.setTitle("Настройки");
-            System.out.println("here");
+
             stage.show();
         } catch (IOException e) {
+            e.printStackTrace();
             logger.logException(e);
         }
     }

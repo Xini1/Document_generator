@@ -42,7 +42,7 @@ public class PropertiesHandler {
     private void loadPropertiesFromFile(File propertiesFile) {
         logger.logMethodInvocation(getClass(), "loadPropertiesFromFile", propertiesFile.toString());
 
-        try (Scanner scanner = new Scanner(propertiesFile, StandardCharsets.UTF_8)) {
+        try (Scanner scanner = new Scanner(propertiesFile)) {
             StringBuilder builder = new StringBuilder();
 
             while (scanner.hasNextLine()) {
@@ -162,8 +162,10 @@ public class PropertiesHandler {
 
         for (String propertyWithValue : propertiesWithValues) {
             String[] parts = propertyWithValue.split("=");
+
             Property property = Property.valueOf(parts[0]);
             String value = parts.length < 2 ? "" : parts[1];
+            
             parsedProperties.put(property, value);
         }
 

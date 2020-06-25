@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Paths;
 
 public class JavaFXApplication extends Application {
 
@@ -18,8 +16,7 @@ public class JavaFXApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        //URL url = Paths.get("./src/main/resources/window.fxml").toUri().toURL();
-        Parent root = FXMLLoader.load(getClass().getResource("./window.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/window.fxml"));
 
         Scene scene = new Scene(root);
 
