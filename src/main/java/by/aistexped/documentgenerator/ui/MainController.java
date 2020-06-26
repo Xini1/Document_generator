@@ -1,5 +1,6 @@
 package by.aistexped.documentgenerator.ui;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -129,7 +130,6 @@ public class MainController {
     private List<TextInputControl> textFieldsForDefaultInterpretation;
     private List<DatePicker> datePickersForDefaultInterpretation;
     private List<ComboBox<String>> comboBoxesForDefaultInterpretation;
-    private PropertiesHandler propertiesHandler;
 
     @FXML
     public void initialize() {
@@ -164,8 +164,6 @@ public class MainController {
         comboBoxesForDefaultInterpretation.add(unloadTypeComboBox);
         comboBoxesForDefaultInterpretation.add(vehicleTypeComboBox);
 
-        propertiesHandler = new PropertiesHandler();
-
         List<String> loadUnloadTypes = Arrays.asList("задняя", "боковая", "верхняя");
         loadTypeComboBox.getItems().addAll(loadUnloadTypes);
         unloadTypeComboBox.getItems().addAll(loadUnloadTypes);
@@ -180,15 +178,15 @@ public class MainController {
         List<String> contractOptions = Arrays.asList("указать существующий", "создать новый");
         contractOptionsComboBox.getItems().addAll(contractOptions);
         contractOptionsComboBox.setValue(contractOptions.get(0));
+
         changeContractTabView();
-
-        updateCustomerOptionsComboBox(propertiesHandler.getProperties());
-
+        updateCustomerOptionsComboBox();
         changeOrderFillingFileNameFieldAndLabelVisibility();
     }
 
     @FXML
     public void generate() {
+        PropertiesHandler propertiesHandler=new PropertiesHandler();
         Map<Property, String> properties = propertiesHandler.getProperties();
 
         Replacements replacements = propertiesHandler.getBasicReplacements();
@@ -297,10 +295,9 @@ public class MainController {
         stage.setScene(scene);
         stage.setTitle("Настройки");
 
-        stage.show();
+        stage.showAndWait();
 
-        propertiesHandler = new PropertiesHandler();
-        updateCustomerOptionsComboBox(propertiesHandler.getProperties());
+        updateCustomerOptionsComboBox();
     }
 
     private void fetchData(Replacements replacements, Map<Property, String> properties) {
@@ -393,11 +390,18 @@ public class MainController {
         orderFillingHandler.save(fileName, replacements);
     }
 
-    private void updateCustomerOptionsComboBox(Map<Property, String> properties) {
+    private void updateCustomerOptionsComboBox() {
+        PropertiesHandler propertiesHandler=new PropertiesHandler();
+        Map<Property, String> properties = propertiesHandler.getProperties();
+
         String[] customerOptions = properties.get(Property.CUSTOMER_LIST).split(",");
-        ObservableList<String> items = customerOptionsComboBox.getItems();
-        items.clear();
-        items.addAll(customerOptions);
+        ObservableList<String> items = FXCollections.observableArrayList(customerOptions);
+
+        if (items.equals(customerOptionsComboBox.getItems())){
+            return;
+        }
+
+        customerOptionsComboBox.setItems(items);
         customerOptionsComboBox.setValue(customerOptions[0]);
     }
 }
