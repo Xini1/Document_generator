@@ -246,12 +246,9 @@ public class MainController {
         FileChooser fileChooser = new FileChooser();
         File initialDirectory = new File("filling_templates");
 
-        if (!initialDirectory.exists()) {
-            initialDirectory.mkdir();
-        }
-
         fileChooser.setInitialDirectory(initialDirectory);
         fileChooser.setTitle("Выберите файл с шаблоном наполнения");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Order filling", "*.filling"));
 
         File file = fileChooser.showOpenDialog(orderFillingFileNameField.getScene().getWindow());
 
@@ -277,6 +274,8 @@ public class MainController {
                 comboBox.setValue(value);
             }
         });
+
+        orderFillingFileNameField.setText(file.getName().replace(".filling", ""));
     }
 
     @FXML
