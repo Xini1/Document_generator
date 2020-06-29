@@ -186,7 +186,7 @@ public class MainController {
 
     @FXML
     public void generate() {
-        PropertiesHandler propertiesHandler=new PropertiesHandler();
+        PropertiesHandler propertiesHandler = new PropertiesHandler();
         Map<Property, String> properties = propertiesHandler.getProperties();
 
         Replacements replacements = propertiesHandler.getBasicReplacements();
@@ -263,10 +263,18 @@ public class MainController {
         Map<String, String> loadedLabelsWithValues = orderFillingHandler.load(file);
 
         textFieldsForDefaultInterpretation.forEach(textInputControl -> {
-            String value = loadedLabelsWithValues.getOrDefault(textInputControl.getPromptText(), "");
+            String value = loadedLabelsWithValues.get(textInputControl.getPromptText());
 
-            if (!value.isEmpty()) {
+            if (value != null) {
                 textInputControl.setText(value);
+            }
+        });
+
+        comboBoxesForDefaultInterpretation.forEach(comboBox -> {
+            String value = loadedLabelsWithValues.get(comboBox.getPromptText());
+
+            if (value != null) {
+                comboBox.setValue(value);
             }
         });
     }
@@ -391,13 +399,13 @@ public class MainController {
     }
 
     private void updateCustomerOptionsComboBox() {
-        PropertiesHandler propertiesHandler=new PropertiesHandler();
+        PropertiesHandler propertiesHandler = new PropertiesHandler();
         Map<Property, String> properties = propertiesHandler.getProperties();
 
         String[] customerOptions = properties.get(Property.CUSTOMER_LIST).split(",");
         ObservableList<String> items = FXCollections.observableArrayList(customerOptions);
 
-        if (items.equals(customerOptionsComboBox.getItems())){
+        if (items.equals(customerOptionsComboBox.getItems())) {
             return;
         }
 

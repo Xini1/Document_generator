@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import by.aistexped.documentgenerator.PropertiesHandler;
 import by.aistexped.documentgenerator.Property;
+import javafx.stage.DirectoryChooser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,9 @@ public class PropertiesController {
     @FXML
     private TextField customerListField;
 
+    @FXML
+    private TextField defaultSaveDirectoryField;
+
     private List<TextField> propertiesFields;
     private PropertiesHandler propertiesHandler;
     private Map<Property, String> properties;
@@ -70,11 +75,21 @@ public class PropertiesController {
         propertiesFields.add(templateNumberLabelField);
         propertiesFields.add(templateCustomerLabelField);
         propertiesFields.add(customerListField);
+        propertiesFields.add(defaultSaveDirectoryField);
 
         propertiesHandler = new PropertiesHandler();
         properties = propertiesHandler.getProperties();
 
         fillInFields();
+    }
+
+    @FXML
+    public void selectDefaultSaveDirectory() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(new File("."));
+
+        File defaultDirectory = directoryChooser.showDialog(defaultSaveDirectoryField.getScene().getWindow());
+        defaultSaveDirectoryField.setText(defaultDirectory.toString());
     }
 
     @FXML

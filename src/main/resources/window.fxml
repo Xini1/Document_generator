@@ -120,7 +120,7 @@
                                              <rowConstraints>
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
@@ -149,7 +149,7 @@
                                                 <TextField fx:id="actingOnField" promptText="/--ACTING_ON--/" text="Устава" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                 <TextField fx:id="representativeShortField" promptText="/--REPRESENTATIVE_SHORT--/" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                 <TextField fx:id="positionField" promptText="/--POSITION--/" text="Директор" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                <TextArea fx:id="requisitesField" prefHeight="200.0" prefWidth="200.0" promptText="/--REQUISITES--/" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <TextArea fx:id="requisitesField" prefHeight="100.0" prefWidth="200.0" promptText="/--REQUISITES--/" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <Label text="Должность подписывающего" GridPane.rowIndex="3">
                                                    <padding>
                                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -198,7 +198,7 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
@@ -266,7 +266,7 @@
                                           <TextField fx:id="recipientCustomsField" promptText="/--RECIPIENT_CUSTOMS--/" text="нет" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                                           <TextField fx:id="priceField" promptText="/--PRICE--/" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                                           <TextField fx:id="paymentTermField" promptText="/--PAYMENT_TERM--/" text="до 15 (Пятнадцати)" GridPane.columnIndex="1" GridPane.rowIndex="16" />
-                                          <TextArea fx:id="vehicleInfoField" prefHeight="200.0" prefWidth="200.0" promptText="/--VEHICLE_INFO--/" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                                          <TextArea fx:id="vehicleInfoField" prefHeight="100.0" prefWidth="200.0" promptText="/--VEHICLE_INFO--/" GridPane.columnIndex="1" GridPane.rowIndex="17" />
                                           <CheckBox fx:id="saveOrderFillingCheckbox" mnemonicParsing="false" onAction="#changeOrderFillingFileNameFieldAndLabelVisibility" text="Сохранить заполнение транспортного заказа?" GridPane.columnIndex="1" GridPane.rowIndex="18" />
                                           <Label fx:id="orderFillingFileNameLabel" text="Имя файла" GridPane.rowIndex="19">
                                              <padding>

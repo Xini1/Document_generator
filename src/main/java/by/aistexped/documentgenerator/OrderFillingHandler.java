@@ -21,8 +21,6 @@ public class OrderFillingHandler {
         labelsToSearchFor.add("/--CARGO--/");
         labelsToSearchFor.add("/--WEIGHT--/");
         labelsToSearchFor.add("/--VOLUME--/");
-        labelsToSearchFor.add("/--LOAD_DATE--/");
-        labelsToSearchFor.add("/--UNLOAD_DATE--/");
         labelsToSearchFor.add("/--VEHICLE_TYPE--/");
         labelsToSearchFor.add("/--PRICE--/");
         labelsToSearchFor.add("/--PAYMENT_TERM--/");
