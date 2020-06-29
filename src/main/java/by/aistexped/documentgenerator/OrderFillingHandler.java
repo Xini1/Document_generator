@@ -1,6 +1,7 @@
 package by.aistexped.documentgenerator;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,11 @@ public class OrderFillingHandler {
 
     public void save(String fileName, Replacements replacements) {
         Map<String, String> labelsAndValuesToSave = fetchRouteCargoPriceLabels(replacements);
+        File destination = new File("filling_templates/" + fileName + ".filling");
 
-        try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter("filling_templates/" + fileName + ".txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(destination), StandardCharsets.UTF_8))) {
+
             String labelsAndValuesToSaveString = labelsAndValuesToSave.entrySet().stream()
                     .map(entry -> entry.getKey() + '=' + entry.getValue() + ';')
                     .collect(Collectors.joining("\n"));
@@ -56,7 +59,7 @@ public class OrderFillingHandler {
     public Map<String, String> load(File file) {
         Map<String, String> replacements = new HashMap<>();
 
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
                 String labelAndValue = scanner.nextLine().replace(";", "");
                 String[] parts = labelAndValue.split("=");
@@ -66,7 +69,7 @@ public class OrderFillingHandler {
 
                 replacements.put(label, value);
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             Logger.getInstance().logException(e);
         }
 
