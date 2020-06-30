@@ -6,7 +6,7 @@
 
     <groupId>by.aistexped</groupId>
     <artifactId>document_generator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.6</version>
     <packaging>jar</packaging>
 
     <properties>
