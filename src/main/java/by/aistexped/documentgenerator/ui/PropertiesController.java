@@ -101,7 +101,8 @@ public class PropertiesController {
         directoryChooser.setInitialDirectory(new File("."));
 
         File defaultDirectory = directoryChooser.showDialog(defaultSaveDirectoryField.getScene().getWindow());
-        defaultSaveDirectoryField.setText(defaultDirectory.toString());
+
+        defaultSaveDirectoryField.setText(defaultDirectory == null ? "" : defaultDirectory.toString());
     }
 
     @FXML
