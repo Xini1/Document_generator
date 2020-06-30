@@ -1,4 +1,6 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.transformers;
+
+import by.aistexped.documentgenerator.iohandlers.Property;
 
 import java.util.Map;
 

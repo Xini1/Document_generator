@@ -1,6 +1,10 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.iohandlers;
+
+import by.aistexped.documentgenerator.Logger;
+import by.aistexped.documentgenerator.transformers.Replacements;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,8 +25,6 @@ public class OrderFillingHandler {
         labelsToSearchFor.add("/--CARGO--/");
         labelsToSearchFor.add("/--WEIGHT--/");
         labelsToSearchFor.add("/--VOLUME--/");
-        labelsToSearchFor.add("/--LOAD_DATE--/");
-        labelsToSearchFor.add("/--UNLOAD_DATE--/");
         labelsToSearchFor.add("/--VEHICLE_TYPE--/");
         labelsToSearchFor.add("/--PRICE--/");
         labelsToSearchFor.add("/--PAYMENT_TERM--/");
@@ -40,25 +42,25 @@ public class OrderFillingHandler {
         return labelsAndValuesToSave;
     }
 
-    public void save(String fileName, Replacements replacements) {
+    public void save(String fileName, Replacements replacements) throws IOException {
         Map<String, String> labelsAndValuesToSave = fetchRouteCargoPriceLabels(replacements);
+        File destination = new File("filling_templates/" + fileName + ".filling");
 
-        try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter("filling_templates/" + fileName + ".txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(destination), StandardCharsets.UTF_8))) {
+
             String labelsAndValuesToSaveString = labelsAndValuesToSave.entrySet().stream()
                     .map(entry -> entry.getKey() + '=' + entry.getValue() + ';')
                     .collect(Collectors.joining("\n"));
 
             writer.write(labelsAndValuesToSaveString);
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
     }
 
-    public Map<String, String> load(File file) {
+    public Map<String, String> load(File file) throws IOException {
         Map<String, String> replacements = new HashMap<>();
 
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
                 String labelAndValue = scanner.nextLine().replace(";", "");
                 String[] parts = labelAndValue.split("=");
@@ -68,8 +70,6 @@ public class OrderFillingHandler {
 
                 replacements.put(label, value);
             }
-        } catch (FileNotFoundException e) {
-            Logger.getInstance().logException(e);
         }
 
         return replacements;

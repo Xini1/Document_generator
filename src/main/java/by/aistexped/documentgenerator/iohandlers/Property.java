@@ -1,4 +1,4 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.iohandlers;
 
 public enum Property {
     TEMPLATE_NUMBER_LABEL,

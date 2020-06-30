@@ -1,4 +1,8 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.iohandlers;
+
+import by.aistexped.documentgenerator.Logger;
+import by.aistexped.documentgenerator.exceptions.PropertiesNotFound;
+import by.aistexped.documentgenerator.transformers.Replacements;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -15,12 +19,12 @@ public class PropertiesHandler {
 
     public static final String PROPERTIES_FILE_PATH = "properties.txt";
 
-    public PropertiesHandler() {
+    public PropertiesHandler() throws PropertiesNotFound, IOException {
         File propertiesFile = new File(PROPERTIES_FILE_PATH);
 
         if (!propertiesFile.exists()) {
             createEmptyPropertiesFile();
-            RuntimeException exception = new RuntimeException("properties.txt not found.");
+            PropertiesNotFound exception = new PropertiesNotFound("properties.txt not found.");
             Logger.getInstance().logException(exception);
             throw exception;
         }
@@ -28,13 +32,13 @@ public class PropertiesHandler {
         loadPropertiesFromFile(propertiesFile);
 
         if (!validate()) {
-            RuntimeException exception = new RuntimeException("Missing properties values.");
+            PropertiesNotFound exception = new PropertiesNotFound("Missing some properties values.");
             Logger.getInstance().logException(exception);
             throw exception;
         }
     }
 
-    private void loadPropertiesFromFile(File propertiesFile) {
+    private void loadPropertiesFromFile(File propertiesFile) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(propertiesFile)) {
             StringBuilder builder = new StringBuilder();
 
@@ -44,8 +48,6 @@ public class PropertiesHandler {
 
             String propertiesFileContent = builder.toString();
             properties = parseProperties(propertiesFileContent);
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
     }
 
@@ -124,14 +126,12 @@ public class PropertiesHandler {
         replacements.put("/--ORDER_NUMBER_PREFIX--/", orderNumberPrefix);
     }
 
-    public void saveToFile() {
+    public void saveToFile() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROPERTIES_FILE_PATH))) {
             String propertiesString = properties.entrySet().stream()
                     .map(entry -> entry.getKey().toString() + '=' + entry.getValue() + ";")
                     .collect(Collectors.joining("\n"));
             writer.write(propertiesString);
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
     }
 
@@ -161,14 +161,12 @@ public class PropertiesHandler {
         return true;
     }
 
-    private void createEmptyPropertiesFile() {
+    private void createEmptyPropertiesFile() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROPERTIES_FILE_PATH))) {
             String propertiesString = Arrays.stream(Property.values())
                     .map(property -> property.toString() + "=;")
                     .collect(Collectors.joining("\n"));
             writer.write(propertiesString);
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.transformers;
 
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
