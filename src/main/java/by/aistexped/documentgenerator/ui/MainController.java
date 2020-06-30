@@ -1,5 +1,13 @@
 package by.aistexped.documentgenerator.ui;
 
+import by.aistexped.documentgenerator.exceptions.PropertiesNotFound;
+import by.aistexped.documentgenerator.iohandlers.DocxIOHandler;
+import by.aistexped.documentgenerator.iohandlers.OrderFillingHandler;
+import by.aistexped.documentgenerator.iohandlers.PropertiesHandler;
+import by.aistexped.documentgenerator.iohandlers.Property;
+import by.aistexped.documentgenerator.transformers.Replacements;
+import by.aistexped.documentgenerator.transformers.Replacer;
+import by.aistexped.documentgenerator.transformers.TemplateTransformer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -186,7 +194,15 @@ public class MainController {
 
     @FXML
     public void generate() {
-        PropertiesHandler propertiesHandler = new PropertiesHandler();
+        PropertiesHandler propertiesHandler;
+        try {
+            propertiesHandler = new PropertiesHandler();
+        } catch (PropertiesNotFound | IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+            return;
+        }
+
         Map<Property, String> properties = propertiesHandler.getProperties();
 
         Replacements replacements = propertiesHandler.getBasicReplacements();
@@ -218,7 +234,12 @@ public class MainController {
             saveOrderFilling(orderFillingFileNameField.getText(), replacements);
         }
 
-        propertiesHandler.saveToFile();
+        try {
+            propertiesHandler.saveToFile();
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+        }
     }
 
     @FXML
@@ -257,7 +278,14 @@ public class MainController {
         }
 
         OrderFillingHandler orderFillingHandler = new OrderFillingHandler();
-        Map<String, String> loadedLabelsWithValues = orderFillingHandler.load(file);
+        Map<String, String> loadedLabelsWithValues;
+        try {
+            loadedLabelsWithValues = orderFillingHandler.load(file);
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+            return;
+        }
 
         textFieldsForDefaultInterpretation.forEach(textInputControl -> {
             String value = loadedLabelsWithValues.get(textInputControl.getPromptText());
@@ -344,11 +372,18 @@ public class MainController {
     private void createNewOrder(Replacements replacements, Map<Property, String> properties, File saveDirectory) {
         String customer = customerOptionsComboBox.getSelectionModel().getSelectedItem();
 
-        DocxIOHandler orderDocxIOHandler = new DocxIOHandler.Builder()
-                .setPathWithCustomerLabel(properties.get(Property.ORDER_PATH))
-                .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
-                .setCustomer(customer)
-                .build();
+        DocxIOHandler orderDocxIOHandler;
+        try {
+            orderDocxIOHandler = new DocxIOHandler.Builder()
+                    .setPathWithCustomerLabel(properties.get(Property.ORDER_PATH))
+                    .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
+                    .setCustomer(customer)
+                    .build();
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+            return;
+        }
 
         TemplateTransformer orderTemplateTransformer = new TemplateTransformer.Builder()
                 .setProperties(properties)
@@ -364,17 +399,29 @@ public class MainController {
 
         orderReplacer.replace(replacements);
 
-        orderDocxIOHandler.save(orderTemplateTransformer.getNextFileName());
+        try {
+            orderDocxIOHandler.save(orderTemplateTransformer.getNextFileName());
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+        }
     }
 
     private void createNewContract(Replacements replacements, Map<Property, String> properties, File saveDirectory) {
         String customer = customerOptionsComboBox.getSelectionModel().getSelectedItem();
 
-        DocxIOHandler contractDocxIOHandler = new DocxIOHandler.Builder()
-                .setPathWithCustomerLabel(properties.get(Property.CONTRACT_PATH))
-                .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
-                .setCustomer(customerOptionsComboBox.getSelectionModel().getSelectedItem())
-                .build();
+        DocxIOHandler contractDocxIOHandler;
+        try {
+            contractDocxIOHandler = new DocxIOHandler.Builder()
+                    .setPathWithCustomerLabel(properties.get(Property.CONTRACT_PATH))
+                    .setCustomerLabel(properties.get(Property.TEMPLATE_CUSTOMER_LABEL))
+                    .setCustomer(customerOptionsComboBox.getSelectionModel().getSelectedItem())
+                    .build();
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+            return;
+        }
 
         TemplateTransformer contractTemplateTransformer = new TemplateTransformer.Builder()
                 .setProperties(properties)
@@ -389,16 +436,33 @@ public class MainController {
         Replacer contractReplacer = new Replacer(contractDocxIOHandler.getDocument(), properties);
         contractReplacer.replace(replacements);
 
-        contractDocxIOHandler.save(contractTemplateTransformer.getNextFileName());
+        try {
+            contractDocxIOHandler.save(contractTemplateTransformer.getNextFileName());
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+        }
     }
 
     private void saveOrderFilling(String fileName, Replacements replacements) {
         OrderFillingHandler orderFillingHandler = new OrderFillingHandler();
-        orderFillingHandler.save(fileName, replacements);
+        try {
+            orderFillingHandler.save(fileName, replacements);
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+        }
     }
 
     private void updateCustomerOptionsComboBox() {
-        PropertiesHandler propertiesHandler = new PropertiesHandler();
+        PropertiesHandler propertiesHandler;
+        try {
+            propertiesHandler = new PropertiesHandler();
+        } catch (PropertiesNotFound | IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+            return;
+        }
         Map<Property, String> properties = propertiesHandler.getProperties();
 
         String[] customerOptions = properties.get(Property.CUSTOMER_LIST).split(",");
@@ -410,5 +474,10 @@ public class MainController {
 
         customerOptionsComboBox.setItems(items);
         customerOptionsComboBox.setValue(customerOptions[0]);
+    }
+
+    private void showErrorAlertForException(Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, e.toString(), ButtonType.CLOSE);
+        alert.showAndWait();
     }
 }

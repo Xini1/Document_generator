@@ -1,4 +1,7 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.iohandlers;
+
+import by.aistexped.documentgenerator.Logger;
+import by.aistexped.documentgenerator.transformers.Replacements;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +42,7 @@ public class OrderFillingHandler {
         return labelsAndValuesToSave;
     }
 
-    public void save(String fileName, Replacements replacements) {
+    public void save(String fileName, Replacements replacements) throws IOException {
         Map<String, String> labelsAndValuesToSave = fetchRouteCargoPriceLabels(replacements);
         File destination = new File("filling_templates/" + fileName + ".filling");
 
@@ -51,12 +54,10 @@ public class OrderFillingHandler {
                     .collect(Collectors.joining("\n"));
 
             writer.write(labelsAndValuesToSaveString);
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
     }
 
-    public Map<String, String> load(File file) {
+    public Map<String, String> load(File file) throws IOException {
         Map<String, String> replacements = new HashMap<>();
 
         try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
@@ -69,8 +70,6 @@ public class OrderFillingHandler {
 
                 replacements.put(label, value);
             }
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
 
         return replacements;

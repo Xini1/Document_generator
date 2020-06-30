@@ -1,4 +1,4 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.iohandlers;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
@@ -11,7 +11,7 @@ public class DocxIOHandler {
     private String path;
     private XWPFDocument document;
 
-    public DocxIOHandler(String path) {
+    public DocxIOHandler(String path) throws IOException {
         this.path = path;
         load();
     }
@@ -20,19 +20,15 @@ public class DocxIOHandler {
         return document;
     }
 
-    public void load() {
+    public void load() throws IOException {
         try (FileInputStream fileInputStream = new FileInputStream(path)) {
             document = new XWPFDocument(fileInputStream);
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
     }
 
-    public void save(String nameTemplate) {
+    public void save(String nameTemplate) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(nameTemplate)) {
             document.write(fileOutputStream);
-        } catch (IOException e) {
-            Logger.getInstance().logException(e);
         }
     }
 
@@ -57,7 +53,7 @@ public class DocxIOHandler {
             return this;
         }
 
-        public DocxIOHandler build() {
+        public DocxIOHandler build() throws IOException {
             String path = pathWithCustomerLabel.replace(customerLabel, customer);
             return new DocxIOHandler(path);
         }

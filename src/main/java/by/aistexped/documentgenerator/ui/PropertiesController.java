@@ -1,12 +1,17 @@
 package by.aistexped.documentgenerator.ui;
 
+import by.aistexped.documentgenerator.Logger;
+import by.aistexped.documentgenerator.exceptions.PropertiesNotFound;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
-import by.aistexped.documentgenerator.PropertiesHandler;
-import by.aistexped.documentgenerator.Property;
+import by.aistexped.documentgenerator.iohandlers.PropertiesHandler;
+import by.aistexped.documentgenerator.iohandlers.Property;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +82,14 @@ public class PropertiesController {
         propertiesFields.add(customerListField);
         propertiesFields.add(defaultSaveDirectoryField);
 
-        propertiesHandler = new PropertiesHandler();
+        try {
+            propertiesHandler = new PropertiesHandler();
+        } catch (PropertiesNotFound | IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+            return;
+        }
+
         properties = propertiesHandler.getProperties();
 
         fillInFields();
@@ -96,7 +108,12 @@ public class PropertiesController {
     public void saveChanges() {
         fetchDataFromFields();
 
-        propertiesHandler.saveToFile();
+        try {
+            propertiesHandler.saveToFile();
+        } catch (IOException e) {
+            Logger.getInstance().logException(e);
+            showErrorAlertForException(e);
+        }
 
         contractPathField.getScene().getWindow().hide();
     }
@@ -118,5 +135,10 @@ public class PropertiesController {
             Property property = Property.valueOf(textField.getPromptText());
             properties.put(property, textField.getText());
         });
+    }
+
+    private void showErrorAlertForException(Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, e.toString(), ButtonType.CLOSE);
+        alert.showAndWait();
     }
 }

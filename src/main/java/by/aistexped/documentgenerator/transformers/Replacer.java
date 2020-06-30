@@ -1,5 +1,6 @@
-package by.aistexped.documentgenerator;
+package by.aistexped.documentgenerator.transformers;
 
+import by.aistexped.documentgenerator.iohandlers.Property;
 import org.apache.poi.xwpf.usermodel.*;
 
 import java.util.Map;
